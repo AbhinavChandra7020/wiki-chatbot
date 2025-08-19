@@ -62,10 +62,3 @@ export function parseWikiText(htmlContent: string, title: string): WikipediaCont
         images: []
     };
 }
-
-async function test() {
-    const result = await fetchWikiData("India");
-    const parsed = parseWikiText(result.parse.text['*'], result.parse.title); 
-    console.log(parsed);
-}
-test();
