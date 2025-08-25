@@ -37,22 +37,34 @@ export function parseWikiText(htmlContent: string, title: string): WikipediaCont
     for(let i = 0; i < elements.length; i++){
         const $el = $(elements[i]);
 
-        if($el.is('h1, h2, h3, h4, h5, h6')){
+        const isHeading = $el.is('h1, h2, h3, h4, h5, h6') || 
+                         ($el.is('div') && $el.find('h1, h2, h3, h4, h5, h6').length > 0);
+
+        if(isHeading){
+            const headingText = $el.is('h1, h2, h3, h4, h5, h6') ? 
+                               $el.text().trim() : 
+                               $el.find('h1, h2, h3, h4, h5, h6').first().text().trim();
+            
             if(currentSection.headingContent.trim()) {
+                currentSection.headingContent = currentSection.headingContent.trim();
                 content.push(currentSection);
             }
 
             currentSection = {
                 id: sectionId++,
-                heading: $el.text(),
+                heading: headingText,
                 headingContent: ""
             };
         } else if ($el.is('p')){
-            currentSection.headingContent += $el.text() + " ";
+            const textContent = $el.text().trim();
+            if (textContent) {
+                currentSection.headingContent += textContent + " ";
+            }
         }
     }
 
     if(currentSection.headingContent.trim()) {
+        currentSection.headingContent = currentSection.headingContent.trim();
         content.push(currentSection);
     }
 
